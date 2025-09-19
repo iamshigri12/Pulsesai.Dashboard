@@ -1,8 +1,10 @@
 ﻿using Abp.Modules;
 using Abp.Reflection.Extensions;
-using Pulsesai.Dashboard.Configuration;
+using Castle.MicroKernel.Registration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Pulsesai.Dashboard.Configuration;
+using Pulsesai.Dashboard.Services;
 
 namespace Pulsesai.Dashboard.Web.Host.Startup
 {
@@ -22,6 +24,7 @@ namespace Pulsesai.Dashboard.Web.Host.Startup
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(typeof(DashboardWebHostModule).GetAssembly());
+             IocManager.IocContainer.Register(  Component.For<TelemetryBuffer>()  .LifestyleSingleton());
         }
     }
 }

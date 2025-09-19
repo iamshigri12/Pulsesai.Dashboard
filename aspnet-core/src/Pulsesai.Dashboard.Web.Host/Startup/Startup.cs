@@ -3,8 +3,6 @@ using Abp.AspNetCore.Mvc.Antiforgery;
 using Abp.AspNetCore.SignalR.Hubs;
 using Abp.Castle.Logging.Log4Net;
 using Abp.Extensions;
-using Pulsesai.Dashboard.Configuration;
-using Pulsesai.Dashboard.Identity;
 using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Pulsesai.Dashboard.Configuration;
+using Pulsesai.Dashboard.Identity;
+using Pulsesai.Dashboard.Web.Host.Hub;
 using System;
 using System.IO;
 using System.Linq;
@@ -79,6 +80,7 @@ namespace Pulsesai.Dashboard.Web.Host.Startup
                     )
                 )
             );
+           
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
@@ -101,6 +103,7 @@ namespace Pulsesai.Dashboard.Web.Host.Startup
                 endpoints.MapHub<AbpCommonHub>("/signalr");
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute("defaultWithArea", "{area}/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<TelemetryHub>("/hubs/telemetry");
             });
 
             // Enable middleware to serve generated Swagger as a JSON endpoint

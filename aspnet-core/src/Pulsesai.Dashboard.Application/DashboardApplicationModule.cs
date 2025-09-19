@@ -25,5 +25,7 @@ public class DashboardApplicationModule : AbpModule
             // Scan the assembly for classes which inherit from AutoMapper.Profile
             cfg => cfg.AddMaps(thisAssembly)
         );
+        Configuration.BackgroundJobs.IsJobExecutionEnabled = true; 
+
     }
 }

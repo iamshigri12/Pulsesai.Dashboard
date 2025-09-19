@@ -5,11 +5,13 @@ using Abp.Runtime.Security;
 using Abp.Timing;
 using Abp.Zero;
 using Abp.Zero.Configuration;
+using Castle.MicroKernel.Registration;
 using Pulsesai.Dashboard.Authorization.Roles;
 using Pulsesai.Dashboard.Authorization.Users;
 using Pulsesai.Dashboard.Configuration;
 using Pulsesai.Dashboard.Localization;
 using Pulsesai.Dashboard.MultiTenancy;
+using Pulsesai.Dashboard.Services;
 using Pulsesai.Dashboard.Timing;
 
 namespace Pulsesai.Dashboard;
@@ -45,6 +47,7 @@ public class DashboardCoreModule : AbpModule
     public override void Initialize()
     {
         IocManager.RegisterAssemblyByConvention(typeof(DashboardCoreModule).GetAssembly());
+      //  IocManager.IocContainer.Register(Component.For<TelemetryBuffer>().LifestyleSingleton());
     }
 
     public override void PostInitialize()
