@@ -30,7 +30,19 @@ namespace Pulsesai.Dashboard.Services
                 if (_count < _buffer.Length) _count++;
             }
         }
-
+        public void AddRange(IEnumerable<SensorReading> items)
+        {
+            if (items == null) return;
+            lock (_lock)
+            {
+                foreach (var item in items)
+                {
+                    _buffer[_head] = item;
+                    _head = (_head + 1) % _buffer.Length;
+                    if (_count < _buffer.Length) _count++;
+                }
+            }
+        }
         public SensorReading[] ToArray()
         {
             lock (_lock)

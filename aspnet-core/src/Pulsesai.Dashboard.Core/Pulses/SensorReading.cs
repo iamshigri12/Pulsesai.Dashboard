@@ -17,6 +17,7 @@ namespace Pulsesai.Dashboard.Pulses
         public SensorReading(Guid id, string sensorId, double value, DateTimeOffset ts)
             : base()
         {
+            Id = id;
             SensorId = sensorId;
             Value = value;
             Timestamp = ts;
