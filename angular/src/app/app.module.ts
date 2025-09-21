@@ -22,7 +22,7 @@ import { SidebarComponent } from './layout/sidebar.component';
 import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
-
+ 
 @NgModule({
     imports: [
         AppRoutingModule,
@@ -48,8 +48,7 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
         SidebarComponent,
         SidebarLogoComponent,
         SidebarUserPanelComponent,
-        SidebarMenuComponent,
-    ],
+        SidebarMenuComponent],
     providers: [],
 })
 export class AppModule {}

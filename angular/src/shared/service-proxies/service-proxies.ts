@@ -1739,6 +1739,240 @@ export class UserServiceProxy {
     }
 }
 
+
+
+@Injectable()
+export class TelemetryServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    /**
+     * @param max (optional) 
+     * @return OK
+     */
+    getRecent(max: number | undefined): Observable<SensorReadingDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Telemetry/GetRecent?";
+        if (max === null)
+            throw new globalThis.Error("The parameter 'max' cannot be null.");
+        else if (max !== undefined)
+            url_ += "max=" + encodeURIComponent("" + max) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_: any) => {
+            return this.processGetRecent(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRecent(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SensorReadingDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SensorReadingDto[]>;
+        }));
+    }
+
+    protected processGetRecent(response: HttpResponseBase): Observable<SensorReadingDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+                (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); } }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+                let result200: any = null;
+                let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                if (Array.isArray(resultData200)) {
+                    result200 = [] as any;
+                    for (let item of resultData200)
+                        result200!.push(SensorReadingDto.fromJS(item));
+                }
+                else {
+                    result200 = null as any;
+                }
+                return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return   _observableOf(null as any);
+    }
+
+    /**
+     * @param minutes (optional) 
+     * @return OK
+     */
+    getStats(minutes: number | undefined): Observable<AggregatedStatsDto> {
+        let url_ = this.baseUrl + "/api/services/app/Telemetry/GetStats?";
+        if (minutes === null)
+            throw new globalThis.Error("The parameter 'minutes' cannot be null.");
+        else if (minutes !== undefined)
+            url_ += "minutes=" + encodeURIComponent("" + minutes) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_: any) => {
+            return this.processGetStats(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStats(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AggregatedStatsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AggregatedStatsDto>;
+        }));
+    }
+
+    protected processGetStats(response: HttpResponseBase): Observable<AggregatedStatsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+                (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); } }
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+                let result200: any = null;
+                let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = AggregatedStatsDto.fromJS(resultData200);
+                return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+                return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return   _observableOf(null as any);;
+    }
+}
+
+export class SensorReadingDto implements ISensorReadingDto {
+    id?: string;
+    sensorId?: string | undefined;
+    value?: number;
+    timestamp?: Date;
+
+    constructor(data?: ISensorReadingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sensorId = _data["sensorId"];
+            this.value = _data["value"];
+            this.timestamp = _data["timestamp"] ? new Date(_data["timestamp"].toString()) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): SensorReadingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SensorReadingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sensorId"] = this.sensorId;
+        data["value"] = this.value;
+        data["timestamp"] = this.timestamp ? this.timestamp.toISOString() : undefined as any;
+        return data;
+    }
+}
+
+export interface ISensorReadingDto {
+    id?: string;
+    sensorId?: string | undefined;
+    value?: number;
+    timestamp?: Date;
+}
+
+export class AggregatedStatsDto implements IAggregatedStatsDto {
+    count?: number;
+    min?: number;
+    max?: number;
+    avg?: number;
+    stdDev?: number;
+
+    constructor(data?: IAggregatedStatsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.count = _data["count"];
+            this.min = _data["min"];
+            this.max = _data["max"];
+            this.avg = _data["avg"];
+            this.stdDev = _data["stdDev"];
+        }
+    }
+
+    static fromJS(data: any): AggregatedStatsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AggregatedStatsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["count"] = this.count;
+        data["min"] = this.min;
+        data["max"] = this.max;
+        data["avg"] = this.avg;
+        data["stdDev"] = this.stdDev;
+        return data;
+    }
+}
+
+export interface IAggregatedStatsDto {
+    count?: number;
+    min?: number;
+    max?: number;
+    avg?: number;
+    stdDev?: number;
+}
+
+
 export class ApplicationInfoDto implements IApplicationInfoDto {
     version: string | undefined;
     releaseDate: moment.Moment;

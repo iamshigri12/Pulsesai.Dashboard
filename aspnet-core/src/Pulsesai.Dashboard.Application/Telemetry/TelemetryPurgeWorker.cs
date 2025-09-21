@@ -41,7 +41,7 @@ namespace Pulsesai.Dashboard.Telemetry
                 {
                     while (!_cts.IsCancellationRequested)
                     {
-                        var cutoff = DateTimeOffset.UtcNow.AddHours(-24);
+                        var cutoff = DateTimeOffset.UtcNow.AddMinutes(-1);
 
                         using (var uow = _uowManager.Begin())
                         {

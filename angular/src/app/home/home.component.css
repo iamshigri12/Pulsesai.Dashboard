@@ -1,0 +1,35 @@
+.dashboard {
+    padding: 1rem;
+}
+
+.stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 1rem auto;
+}
+
+.alerts {
+    margin-top: 2rem;
+}
+
+    .alerts ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .alerts li {
+        padding: 4px 0;
+    }
+
+        .alerts li.anomaly {
+            color: red;
+            font-weight: bold;
+        }
+
